@@ -122,7 +122,9 @@ async function injectRandomThreat() {
   await injectAttackInternal(type);
 }
 
-async function injectAttackInternal(type: string) {
+type AttackType = "rogue_ap" | "evil_twin" | "deauth_flood" | "beacon_flood" | "mac_spoof" | "anomaly";
+
+async function injectAttackInternal(type: AttackType) {
   const tpl = ATTACK_TEMPLATES[type]?.();
   if (!tpl) throw new Error("Unknown attack type");
   const { data: threat, error } = await supabaseAdmin
@@ -135,7 +137,7 @@ async function injectAttackInternal(type: string) {
       ssid: tpl.ssid ?? null,
       source_mac: tpl.source_mac ?? null,
       description: tpl.description,
-      metadata: tpl.metadata,
+      metadata: tpl.metadata as never,
     })
     .select()
     .single();

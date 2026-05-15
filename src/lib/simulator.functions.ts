@@ -117,7 +117,7 @@ const ATTACK_TEMPLATES: Record<string, () => { description: string; severity: "w
 };
 
 async function injectRandomThreat() {
-  const types = Object.keys(ATTACK_TEMPLATES) as Array<keyof typeof ATTACK_TEMPLATES>;
+  const types: AttackType[] = ["rogue_ap", "evil_twin", "deauth_flood", "beacon_flood", "mac_spoof", "anomaly"];
   const type = pick(types);
   await injectAttackInternal(type);
 }

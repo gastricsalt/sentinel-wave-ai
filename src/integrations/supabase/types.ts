@@ -14,16 +14,268 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      access_points: {
+        Row: {
+          bssid: string
+          channel: number | null
+          encryption: string | null
+          first_seen: string
+          id: string
+          is_hidden: boolean
+          is_rogue: boolean
+          last_seen: string
+          signal_strength: number | null
+          ssid: string | null
+          vendor: string | null
+        }
+        Insert: {
+          bssid: string
+          channel?: number | null
+          encryption?: string | null
+          first_seen?: string
+          id?: string
+          is_hidden?: boolean
+          is_rogue?: boolean
+          last_seen?: string
+          signal_strength?: number | null
+          ssid?: string | null
+          vendor?: string | null
+        }
+        Update: {
+          bssid?: string
+          channel?: number | null
+          encryption?: string | null
+          first_seen?: string
+          id?: string
+          is_hidden?: boolean
+          is_rogue?: boolean
+          last_seen?: string
+          signal_strength?: number | null
+          ssid?: string | null
+          vendor?: string | null
+        }
+        Relationships: []
+      }
+      alerts: {
+        Row: {
+          acknowledged: boolean
+          created_at: string
+          id: string
+          message: string
+          severity: Database["public"]["Enums"]["severity_level"]
+          threat_id: string | null
+        }
+        Insert: {
+          acknowledged?: boolean
+          created_at?: string
+          id?: string
+          message: string
+          severity?: Database["public"]["Enums"]["severity_level"]
+          threat_id?: string | null
+        }
+        Update: {
+          acknowledged?: boolean
+          created_at?: string
+          id?: string
+          message?: string
+          severity?: Database["public"]["Enums"]["severity_level"]
+          threat_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alerts_threat_id_fkey"
+            columns: ["threat_id"]
+            isOneToOne: false
+            referencedRelation: "threats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          associated_bssid: string | null
+          first_seen: string
+          id: string
+          is_random_mac: boolean
+          last_seen: string
+          mac: string
+          packets_seen: number
+          signal_strength: number | null
+          vendor: string | null
+        }
+        Insert: {
+          associated_bssid?: string | null
+          first_seen?: string
+          id?: string
+          is_random_mac?: boolean
+          last_seen?: string
+          mac: string
+          packets_seen?: number
+          signal_strength?: number | null
+          vendor?: string | null
+        }
+        Update: {
+          associated_bssid?: string | null
+          first_seen?: string
+          id?: string
+          is_random_mac?: boolean
+          last_seen?: string
+          mac?: string
+          packets_seen?: number
+          signal_strength?: number | null
+          vendor?: string | null
+        }
+        Relationships: []
+      }
+      ingest_events: {
+        Row: {
+          ap_count: number
+          client_count: number
+          created_at: string
+          id: string
+          payload: Json
+          sensor_id: string
+          threat_count: number
+        }
+        Insert: {
+          ap_count?: number
+          client_count?: number
+          created_at?: string
+          id?: string
+          payload: Json
+          sensor_id: string
+          threat_count?: number
+        }
+        Update: {
+          ap_count?: number
+          client_count?: number
+          created_at?: string
+          id?: string
+          payload?: Json
+          sensor_id?: string
+          threat_count?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      threats: {
+        Row: {
+          acknowledged: boolean
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          bssid: string | null
+          confidence: number
+          description: string
+          detected_at: string
+          id: string
+          metadata: Json
+          severity: Database["public"]["Enums"]["severity_level"]
+          source_mac: string | null
+          ssid: string | null
+          type: Database["public"]["Enums"]["threat_type"]
+        }
+        Insert: {
+          acknowledged?: boolean
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          bssid?: string | null
+          confidence?: number
+          description: string
+          detected_at?: string
+          id?: string
+          metadata?: Json
+          severity?: Database["public"]["Enums"]["severity_level"]
+          source_mac?: string | null
+          ssid?: string | null
+          type: Database["public"]["Enums"]["threat_type"]
+        }
+        Update: {
+          acknowledged?: boolean
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          bssid?: string | null
+          confidence?: number
+          description?: string
+          detected_at?: string
+          id?: string
+          metadata?: Json
+          severity?: Database["public"]["Enums"]["severity_level"]
+          source_mac?: string | null
+          ssid?: string | null
+          type?: Database["public"]["Enums"]["threat_type"]
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "analyst"
+      severity_level: "info" | "warning" | "high" | "critical"
+      threat_type:
+        | "rogue_ap"
+        | "evil_twin"
+        | "deauth_flood"
+        | "beacon_flood"
+        | "mac_spoof"
+        | "anomaly"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +402,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "analyst"],
+      severity_level: ["info", "warning", "high", "critical"],
+      threat_type: [
+        "rogue_ap",
+        "evil_twin",
+        "deauth_flood",
+        "beacon_flood",
+        "mac_spoof",
+        "anomaly",
+      ],
+    },
   },
 } as const

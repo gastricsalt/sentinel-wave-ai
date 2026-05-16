@@ -57,8 +57,8 @@ function Page() {
         <Btn label="Clients" count={clients.data?.length ?? 0}
           onClick={() => download(`clients-${Date.now()}.csv`, toCsv(clients.data ?? []))} />
       </div>
-      <Card title="Notes">
-        <p className="text-sm text-muted-foreground">CSV exports include all fields and are suitable for ingestion into SIEM tools, Jupyter notebooks, or research datasets. PDF reports with charts and recommendations are planned in a follow-up.</p>
+      <Card title="Need a formatted report?">
+        <p className="text-sm text-muted-foreground">CSV exports are suited for SIEM ingestion and notebooks. For a printable executive report with charts, findings, and remediation guidance, visit <a href="/security-report" className="text-primary hover:underline">Security Report</a> and use “Save as PDF”.</p>
       </Card>
     </div>
   );

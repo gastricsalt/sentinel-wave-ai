@@ -14,12 +14,16 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
 });
 
-const ATTACK_BUTTONS: Array<{ type: "rogue_ap" | "evil_twin" | "deauth_flood" | "beacon_flood" | "mac_spoof"; label: string }> = [
+const ATTACK_BUTTONS: Array<{ type: "rogue_ap" | "evil_twin" | "deauth_flood" | "beacon_flood" | "mac_spoof" | "wps_attack" | "karma" | "pmkid_capture" | "krack"; label: string }> = [
   { type: "evil_twin", label: "Evil Twin" },
   { type: "deauth_flood", label: "Deauth Flood" },
   { type: "rogue_ap", label: "Rogue AP" },
   { type: "beacon_flood", label: "Beacon Flood" },
   { type: "mac_spoof", label: "MAC Spoof" },
+  { type: "wps_attack", label: "WPS Brute" },
+  { type: "karma", label: "Karma" },
+  { type: "pmkid_capture", label: "PMKID" },
+  { type: "krack", label: "KRACK" },
 ];
 
 const PIE_COLORS = ["oklch(0.62 0.22 275)", "oklch(0.70 0.18 200)", "oklch(0.75 0.18 65)", "oklch(0.62 0.24 25)", "oklch(0.70 0.18 160)", "oklch(0.55 0.20 320)"];

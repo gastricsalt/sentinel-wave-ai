@@ -16,10 +16,12 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedThreatsRouteImport } from './routes/_authenticated/threats'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSecurityReportRouteImport } from './routes/_authenticated/security-report'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedNetworksRouteImport } from './routes/_authenticated/networks'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
+import { Route as AuthenticatedAnalystRouteImport } from './routes/_authenticated/analyst'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -56,6 +58,12 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedSecurityReportRoute =
+  AuthenticatedSecurityReportRouteImport.update({
+    id: '/security-report',
+    path: '/security-report',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -76,6 +84,11 @@ const AuthenticatedClientsRoute = AuthenticatedClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAnalystRoute = AuthenticatedAnalystRouteImport.update({
+  id: '/analyst',
+  path: '/analyst',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
   id: '/api/public/ingest',
   path: '/api/public/ingest',
@@ -87,10 +100,12 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/analyst': typeof AuthenticatedAnalystRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/networks': typeof AuthenticatedNetworksRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/security-report': typeof AuthenticatedSecurityReportRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/threats': typeof AuthenticatedThreatsRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
@@ -100,10 +115,12 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/analyst': typeof AuthenticatedAnalystRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/networks': typeof AuthenticatedNetworksRoute
   '/reports': typeof AuthenticatedReportsRoute
+  '/security-report': typeof AuthenticatedSecurityReportRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/threats': typeof AuthenticatedThreatsRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
@@ -115,10 +132,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/analyst': typeof AuthenticatedAnalystRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/networks': typeof AuthenticatedNetworksRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/security-report': typeof AuthenticatedSecurityReportRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/threats': typeof AuthenticatedThreatsRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
@@ -130,10 +149,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/sitemap.xml'
+    | '/analyst'
     | '/clients'
     | '/dashboard'
     | '/networks'
     | '/reports'
+    | '/security-report'
     | '/settings'
     | '/threats'
     | '/api/public/ingest'
@@ -143,10 +164,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/sitemap.xml'
+    | '/analyst'
     | '/clients'
     | '/dashboard'
     | '/networks'
     | '/reports'
+    | '/security-report'
     | '/settings'
     | '/threats'
     | '/api/public/ingest'
@@ -157,10 +180,12 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/sitemap.xml'
+    | '/_authenticated/analyst'
     | '/_authenticated/clients'
     | '/_authenticated/dashboard'
     | '/_authenticated/networks'
     | '/_authenticated/reports'
+    | '/_authenticated/security-report'
     | '/_authenticated/settings'
     | '/_authenticated/threats'
     | '/api/public/ingest'
@@ -226,6 +251,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/security-report': {
+      id: '/_authenticated/security-report'
+      path: '/security-report'
+      fullPath: '/security-report'
+      preLoaderRoute: typeof AuthenticatedSecurityReportRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/reports': {
       id: '/_authenticated/reports'
       path: '/reports'
@@ -254,6 +286,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/analyst': {
+      id: '/_authenticated/analyst'
+      path: '/analyst'
+      fullPath: '/analyst'
+      preLoaderRoute: typeof AuthenticatedAnalystRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/api/public/ingest': {
       id: '/api/public/ingest'
       path: '/api/public/ingest'
@@ -265,19 +304,23 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAnalystRoute: typeof AuthenticatedAnalystRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedNetworksRoute: typeof AuthenticatedNetworksRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
+  AuthenticatedSecurityReportRoute: typeof AuthenticatedSecurityReportRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedThreatsRoute: typeof AuthenticatedThreatsRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAnalystRoute: AuthenticatedAnalystRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedNetworksRoute: AuthenticatedNetworksRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
+  AuthenticatedSecurityReportRoute: AuthenticatedSecurityReportRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedThreatsRoute: AuthenticatedThreatsRoute,
 }
@@ -297,3 +340,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

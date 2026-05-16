@@ -114,15 +114,45 @@ const ATTACK_TEMPLATES: Record<string, () => { description: string; severity: "w
     bssid: randMac(),
     metadata: { model: "isolation_forest", score: Math.random().toFixed(3) },
   }),
+  wps_attack: () => ({
+    description: `WPS PIN brute-force: ${randInt(20, 80)} M1/M3 exchanges/min`,
+    severity: "high",
+    confidence: 0.86,
+    source_mac: randMac(),
+    bssid: randMac(),
+    metadata: { rate_per_min: randInt(20, 80), suspected_tool: "reaver/bully" },
+  }),
+  karma: () => ({
+    description: `One BSSID responding to ${randInt(8, 30)} different SSID probes`,
+    severity: "high",
+    confidence: 0.83,
+    bssid: randMac(),
+    metadata: { unique_probes: randInt(8, 30), tool: "MANA" },
+  }),
+  pmkid_capture: () => ({
+    description: `Single EAPOL M1 capture without follow-up — PMKID harvest`,
+    severity: "critical",
+    confidence: 0.9,
+    bssid: randMac(),
+    source_mac: randMac(),
+    metadata: { eapol_count: 1, suspected_tool: "hcxdumptool" },
+  }),
+  krack: () => ({
+    description: `Retransmitted EAPOL message 3 with nonce reuse pattern`,
+    severity: "critical",
+    confidence: 0.87,
+    bssid: randMac(),
+    metadata: { cve: "CVE-2017-13077", retries: randInt(3, 8) },
+  }),
 };
 
 async function injectRandomThreat() {
-  const types: AttackType[] = ["rogue_ap", "evil_twin", "deauth_flood", "beacon_flood", "mac_spoof", "anomaly"];
+  const types: AttackType[] = ["rogue_ap", "evil_twin", "deauth_flood", "beacon_flood", "mac_spoof", "anomaly", "wps_attack", "karma", "pmkid_capture", "krack"];
   const type = pick(types);
   await injectAttackInternal(type);
 }
 
-type AttackType = "rogue_ap" | "evil_twin" | "deauth_flood" | "beacon_flood" | "mac_spoof" | "anomaly";
+type AttackType = "rogue_ap" | "evil_twin" | "deauth_flood" | "beacon_flood" | "mac_spoof" | "anomaly" | "wps_attack" | "karma" | "pmkid_capture" | "krack";
 
 async function injectAttackInternal(type: AttackType) {
   const tpl = ATTACK_TEMPLATES[type]?.();
@@ -170,7 +200,7 @@ export const injectAttack = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d) =>
     z.object({
-      type: z.enum(["rogue_ap", "evil_twin", "deauth_flood", "beacon_flood", "mac_spoof", "anomaly"]),
+      type: z.enum(["rogue_ap", "evil_twin", "deauth_flood", "beacon_flood", "mac_spoof", "anomaly", "wps_attack", "karma", "pmkid_capture", "krack"]),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {

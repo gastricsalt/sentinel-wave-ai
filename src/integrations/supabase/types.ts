@@ -276,6 +276,10 @@ export type Database = {
         | "beacon_flood"
         | "mac_spoof"
         | "anomaly"
+        | "wps_attack"
+        | "karma"
+        | "pmkid_capture"
+        | "krack"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -412,6 +416,10 @@ export const Constants = {
         "beacon_flood",
         "mac_spoof",
         "anomaly",
+        "wps_attack",
+        "karma",
+        "pmkid_capture",
+        "krack",
       ],
     },
   },

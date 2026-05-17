@@ -14,15 +14,22 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedTriangulationRouteImport } from './routes/_authenticated/triangulation'
 import { Route as AuthenticatedThreatsRouteImport } from './routes/_authenticated/threats'
+import { Route as AuthenticatedSocRouteImport } from './routes/_authenticated/soc'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSecurityReportRouteImport } from './routes/_authenticated/security-report'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedNetworksRouteImport } from './routes/_authenticated/networks'
+import { Route as AuthenticatedLabRouteImport } from './routes/_authenticated/lab'
+import { Route as AuthenticatedIncidentsRouteImport } from './routes/_authenticated/incidents'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedAnalystRouteImport } from './routes/_authenticated/analyst'
+import { Route as AuthenticatedActorsRouteImport } from './routes/_authenticated/actors'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
+import { Route as AuthenticatedIncidentsIdRouteImport } from './routes/_authenticated/incidents.$id'
+import { Route as AuthenticatedActorsIdRouteImport } from './routes/_authenticated/actors.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -48,9 +55,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTriangulationRoute =
+  AuthenticatedTriangulationRouteImport.update({
+    id: '/triangulation',
+    path: '/triangulation',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedThreatsRoute = AuthenticatedThreatsRouteImport.update({
   id: '/threats',
   path: '/threats',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedSocRoute = AuthenticatedSocRouteImport.update({
+  id: '/soc',
+  path: '/soc',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -74,6 +92,16 @@ const AuthenticatedNetworksRoute = AuthenticatedNetworksRouteImport.update({
   path: '/networks',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedLabRoute = AuthenticatedLabRouteImport.update({
+  id: '/lab',
+  path: '/lab',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedIncidentsRoute = AuthenticatedIncidentsRouteImport.update({
+  id: '/incidents',
+  path: '/incidents',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -89,10 +117,26 @@ const AuthenticatedAnalystRoute = AuthenticatedAnalystRouteImport.update({
   path: '/analyst',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedActorsRoute = AuthenticatedActorsRouteImport.update({
+  id: '/actors',
+  path: '/actors',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
   id: '/api/public/ingest',
   path: '/api/public/ingest',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedIncidentsIdRoute =
+  AuthenticatedIncidentsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedIncidentsRoute,
+  } as any)
+const AuthenticatedActorsIdRoute = AuthenticatedActorsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedActorsRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -100,14 +144,21 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/actors': typeof AuthenticatedActorsRouteWithChildren
   '/analyst': typeof AuthenticatedAnalystRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/incidents': typeof AuthenticatedIncidentsRouteWithChildren
+  '/lab': typeof AuthenticatedLabRoute
   '/networks': typeof AuthenticatedNetworksRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/security-report': typeof AuthenticatedSecurityReportRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/soc': typeof AuthenticatedSocRoute
   '/threats': typeof AuthenticatedThreatsRoute
+  '/triangulation': typeof AuthenticatedTriangulationRoute
+  '/actors/$id': typeof AuthenticatedActorsIdRoute
+  '/incidents/$id': typeof AuthenticatedIncidentsIdRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
 }
 export interface FileRoutesByTo {
@@ -115,14 +166,21 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/actors': typeof AuthenticatedActorsRouteWithChildren
   '/analyst': typeof AuthenticatedAnalystRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/incidents': typeof AuthenticatedIncidentsRouteWithChildren
+  '/lab': typeof AuthenticatedLabRoute
   '/networks': typeof AuthenticatedNetworksRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/security-report': typeof AuthenticatedSecurityReportRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/soc': typeof AuthenticatedSocRoute
   '/threats': typeof AuthenticatedThreatsRoute
+  '/triangulation': typeof AuthenticatedTriangulationRoute
+  '/actors/$id': typeof AuthenticatedActorsIdRoute
+  '/incidents/$id': typeof AuthenticatedIncidentsIdRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
 }
 export interface FileRoutesById {
@@ -132,14 +190,21 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/_authenticated/actors': typeof AuthenticatedActorsRouteWithChildren
   '/_authenticated/analyst': typeof AuthenticatedAnalystRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/incidents': typeof AuthenticatedIncidentsRouteWithChildren
+  '/_authenticated/lab': typeof AuthenticatedLabRoute
   '/_authenticated/networks': typeof AuthenticatedNetworksRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/security-report': typeof AuthenticatedSecurityReportRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/soc': typeof AuthenticatedSocRoute
   '/_authenticated/threats': typeof AuthenticatedThreatsRoute
+  '/_authenticated/triangulation': typeof AuthenticatedTriangulationRoute
+  '/_authenticated/actors/$id': typeof AuthenticatedActorsIdRoute
+  '/_authenticated/incidents/$id': typeof AuthenticatedIncidentsIdRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
 }
 export interface FileRouteTypes {
@@ -149,14 +214,21 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/sitemap.xml'
+    | '/actors'
     | '/analyst'
     | '/clients'
     | '/dashboard'
+    | '/incidents'
+    | '/lab'
     | '/networks'
     | '/reports'
     | '/security-report'
     | '/settings'
+    | '/soc'
     | '/threats'
+    | '/triangulation'
+    | '/actors/$id'
+    | '/incidents/$id'
     | '/api/public/ingest'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -164,14 +236,21 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/sitemap.xml'
+    | '/actors'
     | '/analyst'
     | '/clients'
     | '/dashboard'
+    | '/incidents'
+    | '/lab'
     | '/networks'
     | '/reports'
     | '/security-report'
     | '/settings'
+    | '/soc'
     | '/threats'
+    | '/triangulation'
+    | '/actors/$id'
+    | '/incidents/$id'
     | '/api/public/ingest'
   id:
     | '__root__'
@@ -180,14 +259,21 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/sitemap.xml'
+    | '/_authenticated/actors'
     | '/_authenticated/analyst'
     | '/_authenticated/clients'
     | '/_authenticated/dashboard'
+    | '/_authenticated/incidents'
+    | '/_authenticated/lab'
     | '/_authenticated/networks'
     | '/_authenticated/reports'
     | '/_authenticated/security-report'
     | '/_authenticated/settings'
+    | '/_authenticated/soc'
     | '/_authenticated/threats'
+    | '/_authenticated/triangulation'
+    | '/_authenticated/actors/$id'
+    | '/_authenticated/incidents/$id'
     | '/api/public/ingest'
   fileRoutesById: FileRoutesById
 }
@@ -237,11 +323,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/triangulation': {
+      id: '/_authenticated/triangulation'
+      path: '/triangulation'
+      fullPath: '/triangulation'
+      preLoaderRoute: typeof AuthenticatedTriangulationRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/threats': {
       id: '/_authenticated/threats'
       path: '/threats'
       fullPath: '/threats'
       preLoaderRoute: typeof AuthenticatedThreatsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/soc': {
+      id: '/_authenticated/soc'
+      path: '/soc'
+      fullPath: '/soc'
+      preLoaderRoute: typeof AuthenticatedSocRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/settings': {
@@ -272,6 +372,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedNetworksRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/lab': {
+      id: '/_authenticated/lab'
+      path: '/lab'
+      fullPath: '/lab'
+      preLoaderRoute: typeof AuthenticatedLabRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/incidents': {
+      id: '/_authenticated/incidents'
+      path: '/incidents'
+      fullPath: '/incidents'
+      preLoaderRoute: typeof AuthenticatedIncidentsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -293,6 +407,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAnalystRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/actors': {
+      id: '/_authenticated/actors'
+      path: '/actors'
+      fullPath: '/actors'
+      preLoaderRoute: typeof AuthenticatedActorsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/api/public/ingest': {
       id: '/api/public/ingest'
       path: '/api/public/ingest'
@@ -300,29 +421,78 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicIngestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/incidents/$id': {
+      id: '/_authenticated/incidents/$id'
+      path: '/$id'
+      fullPath: '/incidents/$id'
+      preLoaderRoute: typeof AuthenticatedIncidentsIdRouteImport
+      parentRoute: typeof AuthenticatedIncidentsRoute
+    }
+    '/_authenticated/actors/$id': {
+      id: '/_authenticated/actors/$id'
+      path: '/$id'
+      fullPath: '/actors/$id'
+      preLoaderRoute: typeof AuthenticatedActorsIdRouteImport
+      parentRoute: typeof AuthenticatedActorsRoute
+    }
   }
 }
 
+interface AuthenticatedActorsRouteChildren {
+  AuthenticatedActorsIdRoute: typeof AuthenticatedActorsIdRoute
+}
+
+const AuthenticatedActorsRouteChildren: AuthenticatedActorsRouteChildren = {
+  AuthenticatedActorsIdRoute: AuthenticatedActorsIdRoute,
+}
+
+const AuthenticatedActorsRouteWithChildren =
+  AuthenticatedActorsRoute._addFileChildren(AuthenticatedActorsRouteChildren)
+
+interface AuthenticatedIncidentsRouteChildren {
+  AuthenticatedIncidentsIdRoute: typeof AuthenticatedIncidentsIdRoute
+}
+
+const AuthenticatedIncidentsRouteChildren: AuthenticatedIncidentsRouteChildren =
+  {
+    AuthenticatedIncidentsIdRoute: AuthenticatedIncidentsIdRoute,
+  }
+
+const AuthenticatedIncidentsRouteWithChildren =
+  AuthenticatedIncidentsRoute._addFileChildren(
+    AuthenticatedIncidentsRouteChildren,
+  )
+
 interface AuthenticatedRouteChildren {
+  AuthenticatedActorsRoute: typeof AuthenticatedActorsRouteWithChildren
   AuthenticatedAnalystRoute: typeof AuthenticatedAnalystRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedIncidentsRoute: typeof AuthenticatedIncidentsRouteWithChildren
+  AuthenticatedLabRoute: typeof AuthenticatedLabRoute
   AuthenticatedNetworksRoute: typeof AuthenticatedNetworksRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSecurityReportRoute: typeof AuthenticatedSecurityReportRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSocRoute: typeof AuthenticatedSocRoute
   AuthenticatedThreatsRoute: typeof AuthenticatedThreatsRoute
+  AuthenticatedTriangulationRoute: typeof AuthenticatedTriangulationRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedActorsRoute: AuthenticatedActorsRouteWithChildren,
   AuthenticatedAnalystRoute: AuthenticatedAnalystRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedIncidentsRoute: AuthenticatedIncidentsRouteWithChildren,
+  AuthenticatedLabRoute: AuthenticatedLabRoute,
   AuthenticatedNetworksRoute: AuthenticatedNetworksRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSecurityReportRoute: AuthenticatedSecurityReportRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSocRoute: AuthenticatedSocRoute,
   AuthenticatedThreatsRoute: AuthenticatedThreatsRoute,
+  AuthenticatedTriangulationRoute: AuthenticatedTriangulationRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -340,13 +510,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

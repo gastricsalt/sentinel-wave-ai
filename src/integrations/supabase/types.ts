@@ -91,6 +91,66 @@ export type Database = {
           },
         ]
       }
+      attack_chain_events: {
+        Row: {
+          bssid: string | null
+          description: string
+          event_type: string
+          id: string
+          incident_id: string
+          metadata: Json
+          occurred_at: string
+          sequence: number
+          source_mac: string | null
+          stage: Database["public"]["Enums"]["kill_chain_stage"]
+          target_mac: string | null
+          threat_id: string | null
+        }
+        Insert: {
+          bssid?: string | null
+          description: string
+          event_type: string
+          id?: string
+          incident_id: string
+          metadata?: Json
+          occurred_at?: string
+          sequence: number
+          source_mac?: string | null
+          stage: Database["public"]["Enums"]["kill_chain_stage"]
+          target_mac?: string | null
+          threat_id?: string | null
+        }
+        Update: {
+          bssid?: string | null
+          description?: string
+          event_type?: string
+          id?: string
+          incident_id?: string
+          metadata?: Json
+          occurred_at?: string
+          sequence?: number
+          source_mac?: string | null
+          stage?: Database["public"]["Enums"]["kill_chain_stage"]
+          target_mac?: string | null
+          threat_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attack_chain_events_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "attack_chain_events_threat_id_fkey"
+            columns: ["threat_id"]
+            isOneToOne: false
+            referencedRelation: "threats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           associated_bssid: string | null
@@ -126,6 +186,68 @@ export type Database = {
           vendor?: string | null
         }
         Relationships: []
+      }
+      incidents: {
+        Row: {
+          actor_id: string | null
+          affected_bssids: string[]
+          affected_clients: string[]
+          ai_narrative: string | null
+          closed_at: string | null
+          created_at: string
+          current_stage: Database["public"]["Enums"]["kill_chain_stage"]
+          id: string
+          last_event_at: string
+          severity: Database["public"]["Enums"]["severity_level"]
+          started_at: string
+          status: Database["public"]["Enums"]["incident_status"]
+          summary: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          actor_id?: string | null
+          affected_bssids?: string[]
+          affected_clients?: string[]
+          ai_narrative?: string | null
+          closed_at?: string | null
+          created_at?: string
+          current_stage?: Database["public"]["Enums"]["kill_chain_stage"]
+          id?: string
+          last_event_at?: string
+          severity?: Database["public"]["Enums"]["severity_level"]
+          started_at?: string
+          status?: Database["public"]["Enums"]["incident_status"]
+          summary?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          actor_id?: string | null
+          affected_bssids?: string[]
+          affected_clients?: string[]
+          ai_narrative?: string | null
+          closed_at?: string | null
+          created_at?: string
+          current_stage?: Database["public"]["Enums"]["kill_chain_stage"]
+          id?: string
+          last_event_at?: string
+          severity?: Database["public"]["Enums"]["severity_level"]
+          started_at?: string
+          status?: Database["public"]["Enums"]["incident_status"]
+          summary?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incidents_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "threat_actors"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ingest_events: {
         Row: {
@@ -184,16 +306,123 @@ export type Database = {
         }
         Relationships: []
       }
+      rssi_observations: {
+        Row: {
+          channel: number | null
+          id: string
+          observed_at: string
+          rssi: number
+          sensor_id: string
+          target_bssid: string
+        }
+        Insert: {
+          channel?: number | null
+          id?: string
+          observed_at?: string
+          rssi: number
+          sensor_id: string
+          target_bssid: string
+        }
+        Update: {
+          channel?: number | null
+          id?: string
+          observed_at?: string
+          rssi?: number
+          sensor_id?: string
+          target_bssid?: string
+        }
+        Relationships: []
+      }
+      sensors: {
+        Row: {
+          created_at: string
+          floor: string
+          id: string
+          label: string
+          last_seen: string
+          online: boolean
+          sensor_id: string
+          x_meters: number
+          y_meters: number
+        }
+        Insert: {
+          created_at?: string
+          floor?: string
+          id?: string
+          label: string
+          last_seen?: string
+          online?: boolean
+          sensor_id: string
+          x_meters?: number
+          y_meters?: number
+        }
+        Update: {
+          created_at?: string
+          floor?: string
+          id?: string
+          label?: string
+          last_seen?: string
+          online?: boolean
+          sensor_id?: string
+          x_meters?: number
+          y_meters?: number
+        }
+        Relationships: []
+      }
+      threat_actors: {
+        Row: {
+          attack_count: number
+          fingerprint: string
+          first_seen: string
+          id: string
+          label: string
+          last_seen: string
+          notes: string | null
+          preferred_channels: number[]
+          preferred_types: string[]
+          risk_score: number
+          source_macs: string[]
+        }
+        Insert: {
+          attack_count?: number
+          fingerprint: string
+          first_seen?: string
+          id?: string
+          label: string
+          last_seen?: string
+          notes?: string | null
+          preferred_channels?: number[]
+          preferred_types?: string[]
+          risk_score?: number
+          source_macs?: string[]
+        }
+        Update: {
+          attack_count?: number
+          fingerprint?: string
+          first_seen?: string
+          id?: string
+          label?: string
+          last_seen?: string
+          notes?: string | null
+          preferred_channels?: number[]
+          preferred_types?: string[]
+          risk_score?: number
+          source_macs?: string[]
+        }
+        Relationships: []
+      }
       threats: {
         Row: {
           acknowledged: boolean
           acknowledged_at: string | null
           acknowledged_by: string | null
+          actor_id: string | null
           bssid: string | null
           confidence: number
           description: string
           detected_at: string
           id: string
+          incident_id: string | null
           metadata: Json
           severity: Database["public"]["Enums"]["severity_level"]
           source_mac: string | null
@@ -204,11 +433,13 @@ export type Database = {
           acknowledged?: boolean
           acknowledged_at?: string | null
           acknowledged_by?: string | null
+          actor_id?: string | null
           bssid?: string | null
           confidence?: number
           description: string
           detected_at?: string
           id?: string
+          incident_id?: string | null
           metadata?: Json
           severity?: Database["public"]["Enums"]["severity_level"]
           source_mac?: string | null
@@ -219,18 +450,35 @@ export type Database = {
           acknowledged?: boolean
           acknowledged_at?: string | null
           acknowledged_by?: string | null
+          actor_id?: string | null
           bssid?: string | null
           confidence?: number
           description?: string
           detected_at?: string
           id?: string
+          incident_id?: string | null
           metadata?: Json
           severity?: Database["public"]["Enums"]["severity_level"]
           source_mac?: string | null
           ssid?: string | null
           type?: Database["public"]["Enums"]["threat_type"]
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "threats_actor_id_fkey"
+            columns: ["actor_id"]
+            isOneToOne: false
+            referencedRelation: "threat_actors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "threats_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -268,6 +516,15 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "analyst"
+      incident_status: "open" | "investigating" | "contained" | "closed"
+      kill_chain_stage:
+        | "recon"
+        | "weaponization"
+        | "delivery"
+        | "exploitation"
+        | "installation"
+        | "c2"
+        | "actions"
       severity_level: "info" | "warning" | "high" | "critical"
       threat_type:
         | "rogue_ap"
@@ -408,6 +665,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "analyst"],
+      incident_status: ["open", "investigating", "contained", "closed"],
+      kill_chain_stage: [
+        "recon",
+        "weaponization",
+        "delivery",
+        "exploitation",
+        "installation",
+        "c2",
+        "actions",
+      ],
       severity_level: ["info", "warning", "high", "critical"],
       threat_type: [
         "rogue_ap",

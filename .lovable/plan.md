@@ -1,103 +1,81 @@
+## Goal
+Expand SentinelWave AI from "alerting tool" → **Blue/Purple Team Wireless Defense Platform** with attack reconstruction, forensics, kill-chain, threat actor profiling, AI prediction, and a SOC-style console.
 
-# SentinelWave AI — Build Plan
+You listed 20 modules (51–70). Building all 20 in one pass would be shallow. I'll deliver **the 8 highest-impact ones** as a deeply integrated, working system — the rest become natural follow-ups on the same data model.
 
-A web-based wireless intrusion detection platform. Lovable builds the dashboard + cloud backend + ingest API + demo simulator. A downloadable Python agent runs separately on Kali/Ubuntu and POSTs detections to the backend.
+## What I'll build now (Phase 1)
 
-## What ships in v1
+### 1. Forensic data model (foundation for everything else)
+Migration adds:
+- `incidents` — groups related threats into a single investigation (auto-correlation by time window + BSSID/MAC).
+- `attack_chain_events` — ordered timeline rows linked to incidents (recon → flood → deauth → rogue AP → reassociation).
+- `threat_actors` — clustered attacker profiles (fingerprint hash, first/last seen, attack count, preferred channels, MO).
+- `sensors` — registered monitoring nodes with location coords + last RSSI report.
+- `rssi_observations` — per-sensor signal samples for triangulation.
+- `kill_chain_stage` enum: `recon, weaponization, delivery, exploitation, installation, c2, actions`.
 
-### 1. Lovable Cloud (Postgres) — schema
+### 2. **Module 51 — Attack Path Reconstruction** (`/incidents/$id`)
+Server fn correlates threats within a sliding window into an incident, then renders an interactive vertical timeline + node-link graph (BSSID ↔ client ↔ rogue AP). Each event shows packets, RSSI, stage.
 
-- `profiles` — user profile mirror of auth.users (display_name)
-- `user_roles` + `app_role` enum (`admin`, `analyst`) — security-definer `has_role()` function
-- `access_points` — ssid, bssid (unique), channel, encryption, vendor, signal_strength, first_seen, last_seen, is_rogue
-- `clients` — mac (unique), vendor, associated_bssid, packets_seen, first_seen, last_seen
-- `threats` — type (enum: rogue_ap, evil_twin, deauth_flood, beacon_flood, mac_spoof, anomaly), severity (info/warning/high/critical), confidence (0-1), bssid, description, metadata jsonb, detected_at, acknowledged
-- `alerts` — message, severity, threat_id, acknowledged, created_at
-- `ingest_events` — raw audit trail of agent posts (sensor_id, payload jsonb, created_at)
+### 3. **Module 54 — Wireless Kill Chain** (component on incident page + dashboard widget)
+Maps each chain event to a kill-chain stage, shows current phase, predicts next stage from historical chain patterns (simple Markov over `attack_chain_events`).
 
-RLS: authenticated users can read everything; only `admin` can ack/delete; service role used by ingest endpoint bypasses RLS.
+### 4. **Module 55 — Threat Actor Profiling** (`/actors`, `/actors/$id`)
+Clusters threats by source_mac/BSSID OUI + beacon timing + channel + attack-type signature into actor profiles. Shows attack history, targeted SSIDs, behavioral fingerprint, similarity score.
 
-### 2. Auth (Email + roles)
+### 5. **Module 52 — Source Triangulation** (`/triangulation`)
+Sensors POST RSSI samples (already-supported `/api/public/ingest` extended). Weighted-centroid + log-distance path-loss estimate produces (x,y) on a floor map. SVG floor plan with sensor pins, estimated attacker zone, and confidence ellipse. Seeded with 3 demo sensors + simulated RSSI so it works without real hardware.
 
-- `/login` and `/signup` (email+password)
-- First user auto-promoted to `admin` via trigger; subsequent users default to `analyst`
-- `_authenticated` layout guard
-- Logout in header
+### 6. **Module 61 — AI Attack Prediction** (dashboard banner + analyst prompt)
+Background heuristic + Gemini call: looks at last 60 min of probes/beacon/channel anomalies, returns predicted attack + ETA + confidence. Surfaces as a "Predicted Threat" card.
 
-### 3. Public ingest API — `/api/public/ingest`
+### 7. **Module 62 — Incident Response Playbooks** (on each incident)
+Per threat-type playbook from `threat-knowledge.ts`, expanded with: containment steps, evidence-preservation commands, affected-device list (auto-computed from chain), one-click "Acknowledge + Mark Contained".
 
-- HMAC SHA-256 signature verification (`x-sentinel-signature` header, `INGEST_HMAC_SECRET`)
-- Accepts batched payload: `{ sensor_id, access_points[], clients[], threats[] }`
-- Upserts APs/clients, inserts threats + corresponding alerts
-- Server-side rule augmentation: detects evil-twin (duplicate SSID + different BSSID) and elevates severity
-- Rate limit via simple per-sensor token check
+### 8. **Module 65 — SOC Console** (`/soc`)
+Full-bleed dark ops view: live threat feed (realtime via Supabase channel), active-incident strip, sensor health, AI confidence gauge, world/floor map, key metrics. Auto-refreshes; designed for wall display.
 
-### 4. Demo Simulator
+### 9. **Module 68 — AI Forensic Assistant** (extends existing `/analyst`)
+New "Explain this incident" action on each incident → produces natural-language forensic narrative + exports to the existing **PDF/HTML security report** (extended to include incident packet, chain diagram, actor profile, triangulation snapshot).
 
-- Server function `runSimulationTick` (admin-only) — generates a realistic burst of fake APs/clients/threats so the dashboard is alive without hardware
-- Toggle in header: "Demo Mode ▶/■" — when on, polls the tick every 5s
-- One-shot "Inject attack" buttons (rogue AP / deauth flood / evil twin / beacon flood / MAC spoof)
-
-### 5. Dashboard UI — Midnight Indigo
-
-Routes:
-- `/` — public landing (hero, feature grid, CTA to login)
-- `/_authenticated/dashboard` — main SOC console
-- `/_authenticated/networks` — AP inventory table with filters
-- `/_authenticated/clients` — client device table
-- `/_authenticated/threats` — threat feed with ack/dismiss (admin)
-- `/_authenticated/reports` — CSV export of threats / APs / alerts in selectable date range
-- `/_authenticated/settings` — sensor token, HMAC secret reveal (admin), agent download link
-
-Dashboard widgets:
-- Top stat cards: active threats, critical alerts (24h), tracked APs, tracked clients
-- Live alert feed (Realtime subscription on `alerts`)
-- Threats-over-time line chart (Recharts)
-- Threat-type distribution donut
-- Channel utilization bar
-- Top suspicious APs list
-- Recent client activity strip
-
-Style: deep navy `#0a0a1a` bg, indigo `#4f46e5` primary, glass cards with subtle indigo glow, mono numerals for stats, neon-edge severity pills (critical=red, high=orange, warning=amber, info=indigo). All tokens in `src/styles.css` as oklch — no hardcoded colors in components.
-
-### 6. Realtime
-
-- Supabase Realtime channel on `threats` and `alerts` → invalidate React Query caches → live dashboard updates
-
-### 7. Python agent scaffold (downloadable)
-
-- `public/agent/sentinelwave-agent.py` — single-file Scapy + aircrack-ng script
-- Includes: monitor mode setup, channel hopping, beacon/deauth parsing, rule-based rogue/evil-twin/deauth/beacon-flood/MAC-spoof detection, batched HMAC-signed POST to ingest
-- `public/agent/README.md` — install (`apt install aircrack-ng`, `pip install scapy requests`), usage (`sudo python3 sentinelwave-agent.py --iface wlan0 --url <ingest> --secret <hmac>`), systemd unit example, Docker note
-- `public/agent/requirements.txt`
-- Optional LightGBM hook stub (`models/classifier.py`) with feature-extraction example
-
-Linked from `/settings` ("Download agent").
-
-## Out of scope for v1 (callable in follow-ups)
-
-- Live LightGBM training inside the dashboard (agent ships a stub; training pipeline is a separate task)
-- Email/Telegram alert delivery (channel structure is in DB; wiring is a follow-up)
-- PDF reports (CSV ships v1; PDF later)
-- Federated learning, SDR, BLE, WPA3 deep analysis
-- GPS heatmap (no GPS source defined)
+### 10. **Purple Team Safety Rails (Modules 57/58)**
+Existing simulator already injects attacks. I'll add:
+- Persistent "LAB MODE" banner when simulator used in last 24h.
+- Admin-only gate already present; add explicit confirmation dialog with legal acknowledgment.
+- New PCAP-replay-style simulator: enqueues a *scripted multi-stage attack chain* (beacon flood → deauth → rogue AP → reassociation) so reconstruction + kill-chain demos are reproducible.
 
 ## Technical details
 
-- TanStack Start file-based routes, React Query, Recharts, Tailwind v4 (oklch tokens), Lovable Cloud (Postgres + Auth + Realtime)
-- Server functions: `getDashboardStats`, `listAccessPoints`, `listClients`, `listThreats`, `ackThreat` (admin), `runSimulationTick` (admin), `injectAttack` (admin), `exportCsv`
-- Public route: `/api/public/ingest` (HMAC-verified, uses `supabaseAdmin`)
-- Secrets: `INGEST_HMAC_SECRET` (added via secrets tool after Cloud is enabled)
-- SEO: per-route head() metadata, sitemap.xml + robots.txt
+```text
+src/lib/
+  incidents.functions.ts     correlate, get, list, explain
+  actors.functions.ts        cluster, profile, similarity
+  triangulation.functions.ts ingest samples, estimate position
+  prediction.functions.ts    AI + heuristic next-attack
+  forensic-pdf.functions.ts  extend security-report data
 
-## Build order
+src/routes/_authenticated/
+  soc.tsx                    SOC console
+  incidents.tsx              list
+  incidents.$id.tsx          reconstruction + kill chain + playbook
+  actors.tsx, actors.$id.tsx
+  triangulation.tsx
+  lab.tsx                    scripted attack-chain simulator
 
-1. Enable Cloud → migration for schema, enums, RLS, role trigger
-2. Add `INGEST_HMAC_SECRET`
-3. Design tokens (Midnight Indigo) in `src/styles.css`
-4. Auth pages + `_authenticated` guard + role hook
-5. Server functions + ingest route
-6. Dashboard + sub-pages with Realtime
-7. Simulator + inject-attack controls
-8. Python agent files in `public/agent/`
-9. Landing page, sitemap, robots
+src/components/
+  KillChainBar.tsx
+  AttackTimeline.tsx
+  FloorPlan.tsx
+  IncidentGraph.tsx          (react-flow or hand-rolled SVG)
+```
+
+Realtime: enable `supabase_realtime` on `threats`, `incidents`, `alerts`.
+Correlation runs server-side on each new threat insert (Postgres trigger calling an Edge-equivalent server fn via cron-style polling, or inline from the simulator/ingest paths).
+
+## Out of scope this pass (Phase 2 — call out, don't build)
+Modules 53 (full PCAP storage), 56 (RF movement animation), 59 (YARA/firmware), 60 (hunting query language), 63 (separate scoring service — partially covered by existing risk score), 64 (digital twin), 66 (multi-layer fusion — partially covered), 67 (device trust), 69 (federated sharing), 70 (multi-tenant sensor fleet). These plug into the same `incidents` / `sensors` / `actors` tables when you want them.
+
+## Estimated impact
+~6 new tables, ~8 new server fns, ~7 new routes, ~5 new components, 1 migration, extends 2 existing files (`security-report`, `analyst`). No new external paid services — uses existing Lovable AI Gateway (Gemini 2.5 Flash).
+
+Approve and I'll execute end-to-end.

@@ -35,7 +35,8 @@ export const runScriptedChain = createServerFn({ method: "POST" })
     const now = Date.now();
     const sec = (s: number) => new Date(now - (90 - s) * 1000).toISOString();
 
-    type Step = { type: string; description: string; severity: "warning" | "high" | "critical"; bssid?: string; source_mac?: string; ssid?: string; offset: number; meta: Record<string, unknown> };
+    type TType = "anomaly" | "beacon_flood" | "deauth_flood" | "evil_twin" | "karma" | "krack" | "mac_spoof" | "pmkid_capture" | "rogue_ap" | "wps_attack";
+    type Step = { type: TType; description: string; severity: "warning" | "high" | "critical"; bssid?: string; source_mac?: string; ssid?: string; offset: number; meta: Record<string, unknown> };
     let steps: Step[] = [];
 
     if (data.scenario === "evil_twin_campaign") {

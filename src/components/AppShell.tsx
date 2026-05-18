@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Shield, Activity, Wifi, Users, AlertTriangle, FileText, Settings, LogOut, Bot, FileBarChart2, Radar, Crosshair, Fingerprint, FlaskConical, ShieldAlert } from "lucide-react";
+import { Shield, Activity, Wifi, Users, AlertTriangle, FileText, Settings, LogOut, Bot, FileBarChart2, Radar, Crosshair, Fingerprint, FlaskConical, ShieldAlert, ScanSearch } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -8,6 +8,7 @@ const NAV = [
   { to: "/soc", label: "SOC Console", icon: ShieldAlert },
   { to: "/dashboard", label: "Telemetry", icon: Activity },
   { to: "/incidents", label: "Incidents", icon: Radar },
+  { to: "/recon", label: "Network Recon", icon: ScanSearch },
   { to: "/actors", label: "Threat Actors", icon: Fingerprint },
   { to: "/triangulation", label: "Triangulation", icon: Crosshair },
   { to: "/networks", label: "Networks", icon: Wifi },

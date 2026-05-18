@@ -279,6 +279,51 @@ export type Database = {
         }
         Relationships: []
       }
+      network_scans: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          finished_at: string | null
+          high_risk_count: number
+          host_count: number
+          id: string
+          open_port_count: number
+          profile: Database["public"]["Enums"]["scan_profile"]
+          raw_summary: Json
+          sensor_id: string
+          started_at: string
+          target: string
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          finished_at?: string | null
+          high_risk_count?: number
+          host_count?: number
+          id?: string
+          open_port_count?: number
+          profile?: Database["public"]["Enums"]["scan_profile"]
+          raw_summary?: Json
+          sensor_id: string
+          started_at?: string
+          target: string
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          finished_at?: string | null
+          high_risk_count?: number
+          host_count?: number
+          id?: string
+          open_port_count?: number
+          profile?: Database["public"]["Enums"]["scan_profile"]
+          raw_summary?: Json
+          sensor_id?: string
+          started_at?: string
+          target?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -332,6 +377,178 @@ export type Database = {
           target_bssid?: string
         }
         Relationships: []
+      }
+      scan_hosts: {
+        Row: {
+          created_at: string
+          highest_risk: Database["public"]["Enums"]["port_risk"]
+          hostname: string | null
+          id: string
+          ip: string
+          mac: string | null
+          open_port_count: number
+          os_accuracy: number | null
+          os_guess: string | null
+          scan_id: string
+          status: string
+          vendor: string | null
+        }
+        Insert: {
+          created_at?: string
+          highest_risk?: Database["public"]["Enums"]["port_risk"]
+          hostname?: string | null
+          id?: string
+          ip: string
+          mac?: string | null
+          open_port_count?: number
+          os_accuracy?: number | null
+          os_guess?: string | null
+          scan_id: string
+          status?: string
+          vendor?: string | null
+        }
+        Update: {
+          created_at?: string
+          highest_risk?: Database["public"]["Enums"]["port_risk"]
+          hostname?: string | null
+          id?: string
+          ip?: string
+          mac?: string | null
+          open_port_count?: number
+          os_accuracy?: number | null
+          os_guess?: string | null
+          scan_id?: string
+          status?: string
+          vendor?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_hosts_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "network_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scan_jobs: {
+        Row: {
+          assigned_sensor: string | null
+          claimed_at: string | null
+          completed_at: string | null
+          created_at: string
+          error: string | null
+          id: string
+          profile: Database["public"]["Enums"]["scan_profile"]
+          requested_by: string | null
+          scan_id: string | null
+          status: Database["public"]["Enums"]["scan_job_status"]
+          target: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_sensor?: string | null
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          profile?: Database["public"]["Enums"]["scan_profile"]
+          requested_by?: string | null
+          scan_id?: string | null
+          status?: Database["public"]["Enums"]["scan_job_status"]
+          target: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_sensor?: string | null
+          claimed_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          error?: string | null
+          id?: string
+          profile?: Database["public"]["Enums"]["scan_profile"]
+          requested_by?: string | null
+          scan_id?: string | null
+          status?: Database["public"]["Enums"]["scan_job_status"]
+          target?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_jobs_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "network_scans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scan_ports: {
+        Row: {
+          cpe: string | null
+          created_at: string
+          extra_info: string | null
+          host_id: string
+          id: string
+          port: number
+          product: string | null
+          protocol: string
+          risk: Database["public"]["Enums"]["port_risk"]
+          risk_reason: string | null
+          scan_id: string
+          service: string | null
+          state: string
+          version: string | null
+        }
+        Insert: {
+          cpe?: string | null
+          created_at?: string
+          extra_info?: string | null
+          host_id: string
+          id?: string
+          port: number
+          product?: string | null
+          protocol?: string
+          risk?: Database["public"]["Enums"]["port_risk"]
+          risk_reason?: string | null
+          scan_id: string
+          service?: string | null
+          state?: string
+          version?: string | null
+        }
+        Update: {
+          cpe?: string | null
+          created_at?: string
+          extra_info?: string | null
+          host_id?: string
+          id?: string
+          port?: number
+          product?: string | null
+          protocol?: string
+          risk?: Database["public"]["Enums"]["port_risk"]
+          risk_reason?: string | null
+          scan_id?: string
+          service?: string | null
+          state?: string
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scan_ports_host_id_fkey"
+            columns: ["host_id"]
+            isOneToOne: false
+            referencedRelation: "scan_hosts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scan_ports_scan_id_fkey"
+            columns: ["scan_id"]
+            isOneToOne: false
+            referencedRelation: "network_scans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sensors: {
         Row: {
@@ -525,6 +742,14 @@ export type Database = {
         | "installation"
         | "c2"
         | "actions"
+      port_risk: "info" | "low" | "medium" | "high" | "critical"
+      scan_job_status:
+        | "queued"
+        | "running"
+        | "completed"
+        | "failed"
+        | "cancelled"
+      scan_profile: "discovery" | "quick" | "default" | "intense" | "vuln"
       severity_level: "info" | "warning" | "high" | "critical"
       threat_type:
         | "rogue_ap"
@@ -675,6 +900,15 @@ export const Constants = {
         "c2",
         "actions",
       ],
+      port_risk: ["info", "low", "medium", "high", "critical"],
+      scan_job_status: [
+        "queued",
+        "running",
+        "completed",
+        "failed",
+        "cancelled",
+      ],
+      scan_profile: ["discovery", "quick", "default", "intense", "vuln"],
       severity_level: ["info", "warning", "high", "critical"],
       threat_type: [
         "rogue_ap",

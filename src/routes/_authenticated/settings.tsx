@@ -45,6 +45,9 @@ function Page() {
           <a href="/agent/sentinelwave-agent.py" download className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm border border-border hover:border-primary hover:bg-primary/10 transition">
             <Download className="w-4 h-4" /> sentinelwave-agent.py
           </a>
+          <a href="/agent/sentinelwave-nmap.py" download className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm border border-border hover:border-primary hover:bg-primary/10 transition">
+            <Download className="w-4 h-4" /> sentinelwave-nmap.py
+          </a>
           <a href="/agent/README.md" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm border border-border hover:border-primary hover:bg-primary/10 transition">
             <Download className="w-4 h-4" /> README.md
           </a>

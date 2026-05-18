@@ -20,6 +20,7 @@ import { Route as AuthenticatedSocRouteImport } from './routes/_authenticated/so
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSecurityReportRouteImport } from './routes/_authenticated/security-report'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
+import { Route as AuthenticatedReconRouteImport } from './routes/_authenticated/recon'
 import { Route as AuthenticatedNetworksRouteImport } from './routes/_authenticated/networks'
 import { Route as AuthenticatedLabRouteImport } from './routes/_authenticated/lab'
 import { Route as AuthenticatedIncidentsRouteImport } from './routes/_authenticated/incidents'
@@ -27,6 +28,8 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
 import { Route as AuthenticatedAnalystRouteImport } from './routes/_authenticated/analyst'
 import { Route as AuthenticatedActorsRouteImport } from './routes/_authenticated/actors'
+import { Route as ApiPublicScanJobsRouteImport } from './routes/api/public/scan-jobs'
+import { Route as ApiPublicNmapRouteImport } from './routes/api/public/nmap'
 import { Route as ApiPublicIngestRouteImport } from './routes/api/public/ingest'
 import { Route as AuthenticatedIncidentsIdRouteImport } from './routes/_authenticated/incidents.$id'
 import { Route as AuthenticatedActorsIdRouteImport } from './routes/_authenticated/actors.$id'
@@ -87,6 +90,11 @@ const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedReconRoute = AuthenticatedReconRouteImport.update({
+  id: '/recon',
+  path: '/recon',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedNetworksRoute = AuthenticatedNetworksRouteImport.update({
   id: '/networks',
   path: '/networks',
@@ -122,6 +130,16 @@ const AuthenticatedActorsRoute = AuthenticatedActorsRouteImport.update({
   path: '/actors',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const ApiPublicScanJobsRoute = ApiPublicScanJobsRouteImport.update({
+  id: '/api/public/scan-jobs',
+  path: '/api/public/scan-jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicNmapRoute = ApiPublicNmapRouteImport.update({
+  id: '/api/public/nmap',
+  path: '/api/public/nmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicIngestRoute = ApiPublicIngestRouteImport.update({
   id: '/api/public/ingest',
   path: '/api/public/ingest',
@@ -151,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/incidents': typeof AuthenticatedIncidentsRouteWithChildren
   '/lab': typeof AuthenticatedLabRoute
   '/networks': typeof AuthenticatedNetworksRoute
+  '/recon': typeof AuthenticatedReconRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/security-report': typeof AuthenticatedSecurityReportRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -160,6 +179,8 @@ export interface FileRoutesByFullPath {
   '/actors/$id': typeof AuthenticatedActorsIdRoute
   '/incidents/$id': typeof AuthenticatedIncidentsIdRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
+  '/api/public/nmap': typeof ApiPublicNmapRoute
+  '/api/public/scan-jobs': typeof ApiPublicScanJobsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -173,6 +194,7 @@ export interface FileRoutesByTo {
   '/incidents': typeof AuthenticatedIncidentsRouteWithChildren
   '/lab': typeof AuthenticatedLabRoute
   '/networks': typeof AuthenticatedNetworksRoute
+  '/recon': typeof AuthenticatedReconRoute
   '/reports': typeof AuthenticatedReportsRoute
   '/security-report': typeof AuthenticatedSecurityReportRoute
   '/settings': typeof AuthenticatedSettingsRoute
@@ -182,6 +204,8 @@ export interface FileRoutesByTo {
   '/actors/$id': typeof AuthenticatedActorsIdRoute
   '/incidents/$id': typeof AuthenticatedIncidentsIdRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
+  '/api/public/nmap': typeof ApiPublicNmapRoute
+  '/api/public/scan-jobs': typeof ApiPublicScanJobsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -197,6 +221,7 @@ export interface FileRoutesById {
   '/_authenticated/incidents': typeof AuthenticatedIncidentsRouteWithChildren
   '/_authenticated/lab': typeof AuthenticatedLabRoute
   '/_authenticated/networks': typeof AuthenticatedNetworksRoute
+  '/_authenticated/recon': typeof AuthenticatedReconRoute
   '/_authenticated/reports': typeof AuthenticatedReportsRoute
   '/_authenticated/security-report': typeof AuthenticatedSecurityReportRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
@@ -206,6 +231,8 @@ export interface FileRoutesById {
   '/_authenticated/actors/$id': typeof AuthenticatedActorsIdRoute
   '/_authenticated/incidents/$id': typeof AuthenticatedIncidentsIdRoute
   '/api/public/ingest': typeof ApiPublicIngestRoute
+  '/api/public/nmap': typeof ApiPublicNmapRoute
+  '/api/public/scan-jobs': typeof ApiPublicScanJobsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -221,6 +248,7 @@ export interface FileRouteTypes {
     | '/incidents'
     | '/lab'
     | '/networks'
+    | '/recon'
     | '/reports'
     | '/security-report'
     | '/settings'
@@ -230,6 +258,8 @@ export interface FileRouteTypes {
     | '/actors/$id'
     | '/incidents/$id'
     | '/api/public/ingest'
+    | '/api/public/nmap'
+    | '/api/public/scan-jobs'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -243,6 +273,7 @@ export interface FileRouteTypes {
     | '/incidents'
     | '/lab'
     | '/networks'
+    | '/recon'
     | '/reports'
     | '/security-report'
     | '/settings'
@@ -252,6 +283,8 @@ export interface FileRouteTypes {
     | '/actors/$id'
     | '/incidents/$id'
     | '/api/public/ingest'
+    | '/api/public/nmap'
+    | '/api/public/scan-jobs'
   id:
     | '__root__'
     | '/'
@@ -266,6 +299,7 @@ export interface FileRouteTypes {
     | '/_authenticated/incidents'
     | '/_authenticated/lab'
     | '/_authenticated/networks'
+    | '/_authenticated/recon'
     | '/_authenticated/reports'
     | '/_authenticated/security-report'
     | '/_authenticated/settings'
@@ -275,6 +309,8 @@ export interface FileRouteTypes {
     | '/_authenticated/actors/$id'
     | '/_authenticated/incidents/$id'
     | '/api/public/ingest'
+    | '/api/public/nmap'
+    | '/api/public/scan-jobs'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -284,6 +320,8 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   ApiPublicIngestRoute: typeof ApiPublicIngestRoute
+  ApiPublicNmapRoute: typeof ApiPublicNmapRoute
+  ApiPublicScanJobsRoute: typeof ApiPublicScanJobsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -365,6 +403,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/recon': {
+      id: '/_authenticated/recon'
+      path: '/recon'
+      fullPath: '/recon'
+      preLoaderRoute: typeof AuthenticatedReconRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/networks': {
       id: '/_authenticated/networks'
       path: '/networks'
@@ -413,6 +458,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/actors'
       preLoaderRoute: typeof AuthenticatedActorsRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/api/public/scan-jobs': {
+      id: '/api/public/scan-jobs'
+      path: '/api/public/scan-jobs'
+      fullPath: '/api/public/scan-jobs'
+      preLoaderRoute: typeof ApiPublicScanJobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/nmap': {
+      id: '/api/public/nmap'
+      path: '/api/public/nmap'
+      fullPath: '/api/public/nmap'
+      preLoaderRoute: typeof ApiPublicNmapRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/api/public/ingest': {
       id: '/api/public/ingest'
@@ -471,6 +530,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedIncidentsRoute: typeof AuthenticatedIncidentsRouteWithChildren
   AuthenticatedLabRoute: typeof AuthenticatedLabRoute
   AuthenticatedNetworksRoute: typeof AuthenticatedNetworksRoute
+  AuthenticatedReconRoute: typeof AuthenticatedReconRoute
   AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSecurityReportRoute: typeof AuthenticatedSecurityReportRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
@@ -487,6 +547,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIncidentsRoute: AuthenticatedIncidentsRouteWithChildren,
   AuthenticatedLabRoute: AuthenticatedLabRoute,
   AuthenticatedNetworksRoute: AuthenticatedNetworksRoute,
+  AuthenticatedReconRoute: AuthenticatedReconRoute,
   AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSecurityReportRoute: AuthenticatedSecurityReportRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
@@ -506,6 +567,8 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   ApiPublicIngestRoute: ApiPublicIngestRoute,
+  ApiPublicNmapRoute: ApiPublicNmapRoute,
+  ApiPublicScanJobsRoute: ApiPublicScanJobsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

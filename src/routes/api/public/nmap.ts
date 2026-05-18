@@ -4,7 +4,8 @@ import { z } from "zod";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 // Risk classification — runs server-side so the agent can't lie about it.
-const RISKY_SERVICES: Record<string, { risk: "low" | "medium" | "high" | "critical"; reason: string }> = {
+type PortRisk = "info" | "low" | "medium" | "high" | "critical";
+const RISKY_SERVICES: Record<string, { risk: PortRisk; reason: string }> = {
   telnet:       { risk: "critical", reason: "Cleartext remote shell — credentials sniffable" },
   ftp:          { risk: "high",     reason: "Cleartext auth + frequent anonymous misconfig" },
   rlogin:       { risk: "critical", reason: "Legacy cleartext remote login" },
@@ -25,7 +26,7 @@ const RISKY_SERVICES: Record<string, { risk: "low" | "medium" | "high" | "critic
   ssh:          { risk: "low",      reason: "SSH exposed — enforce keys + fail2ban" },
 };
 
-function classifyPort(port: number, service: string | null): { risk: string; reason: string } {
+function classifyPort(port: number, service: string | null): { risk: PortRisk; reason: string } {
   const s = (service ?? "").toLowerCase();
   if (RISKY_SERVICES[s]) return RISKY_SERVICES[s];
   if ([23, 513, 514].includes(port)) return { risk: "critical", reason: "Legacy cleartext service" };

@@ -243,11 +243,27 @@ journalctl -u sentinelwave-agent -f
 | `/triangulation` | Multi-sensor RF source localization on a floor plan |
 | `/networks` | Access point inventory |
 | `/clients` | Client device inventory |
+| `/recon` | **Network recon — nmap scan queue, host/port/service exposure, severity-classified findings** |
 | `/analyst` | AI security analyst chat (Gemini 2.5 Flash) |
 | `/reports` | Exports + link to printable security report |
 | `/security-report` | Printable executive report (use browser → Save as PDF) |
 | `/lab` | Admin-only purple-team attack simulator |
 | `/settings` | Role, ingest endpoint, agent downloads |
+
+### Sensor agents (Linux)
+
+| Agent | Purpose |
+| --- | --- |
+| `sentinelwave-agent.py` | 802.11 monitor-mode wireless IDS (scapy + rule-based detection) |
+| `sentinelwave-nmap.py` | **Authorized network recon — runs queued nmap scans and posts findings** |
+
+### Public ingest endpoints
+
+| Path | Method | Used by |
+| --- | --- | --- |
+| `/api/public/ingest` | POST | Wireless IDS agent — HMAC-signed JSON of APs / clients / threats |
+| `/api/public/nmap` | POST | Nmap agent — HMAC-signed scan results (hosts + ports) |
+| `/api/public/scan-jobs` | GET | Nmap agent — claims queued scan jobs (HMAC over METHOD:PATH:TIMESTAMP) |
 
 ---
 
@@ -307,6 +323,12 @@ Worker runtime. Replace with a Web-standard or fetch-based equivalent.
 Keep this section current. Add a new entry every time the agent ships a
 feature, route, table, or breaking change.
 
+- **2026-05-19** — **Network recon module**: new `/recon` route with scan queue,
+  host/port inventory, and severity-classified findings (telnet, SMB, RDP,
+  exposed DBs, etc.). Added `sentinelwave-nmap.py` Linux agent that polls a
+  job queue and runs authorized nmap scans. New tables: `network_scans`,
+  `scan_hosts`, `scan_ports`, `scan_jobs`. New endpoints: `/api/public/nmap`,
+  `/api/public/scan-jobs`.
 - **2026-05-18** — README created with full Linux quick start, module map,
   troubleshooting, env reference. Documented Phase-1 platform (SOC console,
   incidents, actors, triangulation, lab, AI analyst, security report).
@@ -318,3 +340,41 @@ feature, route, table, or breaking change.
   enum (`wps_attack`, `karma`, `pmkid_capture`, `krack`).
 - **2026-05-15** — Initial release: auth, dashboard, threats, networks,
   clients, reports, settings, Python capture agent, HMAC-signed ingest.
+
+---
+
+## Running the nmap agent (Linux)
+
+```bash
+sudo apt install -y nmap python3-pip
+pip install python-nmap requests
+
+# Option A — poll the job queue (recommended; trigger scans from /recon UI)
+sudo SENTINEL_HMAC_SECRET='<your-secret>' \
+  python3 sentinelwave-nmap.py \
+  --base-url https://<your-app>.lovable.app \
+  --sensor-id nmap-01
+
+# Option B — one-shot scan, no queue
+sudo SENTINEL_HMAC_SECRET='<your-secret>' \
+  python3 sentinelwave-nmap.py \
+  --base-url https://<your-app>.lovable.app \
+  --sensor-id nmap-01 \
+  --target 192.168.1.0/24 --profile default
+
+# Option C — scheduled recurring scan
+sudo SENTINEL_HMAC_SECRET='<your-secret>' \
+  python3 sentinelwave-nmap.py \
+  --base-url https://<your-app>.lovable.app \
+  --sensor-id nmap-01 \
+  --target 10.0.0.0/24 --profile vuln --interval 3600
+```
+
+**Profiles:** `discovery` (ping sweep), `quick` (top 100 ports), `default`
+(top 1000 + version detection), `intense` (full TCP + OS), `vuln`
+(NSE `vulners` script — CVE lookup per service version, requires
+`sudo apt install -y nmap-scripts` on some distros).
+
+**Authorization:** only scan networks you own or have written permission
+to assess. The agent runs whatever the SOC queues — keep the
+`SENTINEL_HMAC_SECRET` private.

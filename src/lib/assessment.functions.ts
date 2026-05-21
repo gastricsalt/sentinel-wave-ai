@@ -28,8 +28,8 @@ export const runAssessment = createServerFn({ method: "POST" })
       supabaseAdmin.from("network_baseline").select("mac,ip,approved"),
     ]);
 
-    const cveRows: Array<Record<string, unknown>> = [];
-    const recRows: Array<Record<string, unknown>> = [];
+    const cveRows: any[] = [];
+    const recRows: any[] = [];
     const portsByHost: Record<string, typeof ports> = {};
     for (const p of ports ?? []) (portsByHost[p.host_id] ??= []).push(p);
 

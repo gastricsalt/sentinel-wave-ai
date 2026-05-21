@@ -239,3 +239,63 @@ export const upsertBaseline = createServerFn({ method: "POST" })
     );
     return { ok: true };
   });
+
+// ---------- Wi-Fi vulnerability scan (live, derived from access_points) ----------
+export const getWifiVulnerabilities = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    const { data: aps } = await supabaseAdmin
+      .from("access_points")
+      .select("id,bssid,ssid,encryption,channel,is_hidden,is_rogue,vendor,signal_strength,last_seen")
+      .order("last_seen", { ascending: false })
+      .limit(500);
+
+    const perAp = (aps ?? []).map((ap) => {
+      const findings = analyzeAccessPoint(ap as any);
+      return { ap, findings, score: scoreWifiPosture(findings) };
+    });
+
+    const allFindings: WifiFinding[] = perAp.flatMap((x) => x.findings);
+    const buckets = { critical: 0, high: 0, medium: 0, low: 0, info: 0 };
+    for (const f of allFindings) buckets[f.severity]++;
+
+    const wirelessScore = perAp.length
+      ? Math.round(perAp.reduce((s, x) => s + x.score, 0) / perAp.length)
+      : 100;
+
+    return {
+      access_points: perAp,
+      findings: allFindings,
+      buckets,
+      wireless_score: wirelessScore,
+      ap_count: perAp.length,
+    };
+  });
+
+export const runWifiAssessment = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await requireAdmin(context.userId);
+
+    const { data: aps } = await supabaseAdmin
+      .from("access_points")
+      .select("id,bssid,ssid,encryption,channel,is_hidden,is_rogue,vendor,signal_strength");
+
+    // Clear previous wireless-derived recommendations so re-runs are idempotent
+    await supabaseAdmin.from("security_recommendations").delete().eq("category", "wireless");
+
+    const recs: any[] = [];
+    for (const ap of aps ?? []) {
+      for (const f of analyzeAccessPoint(ap as any)) {
+        if (f.severity === "info" || f.severity === "low") continue;
+        recs.push({
+          title: `${f.title} — ${ap.ssid ?? "(hidden)"} [${ap.bssid}]`,
+          rationale: `${f.summary} Recommendation: ${f.recommendation}${f.cve ? ` (related: ${f.cve})` : ""}`,
+          category: "wireless",
+          priority: f.severity === "critical" ? "critical" : f.severity === "high" ? "high" : "medium",
+        });
+      }
+    }
+    if (recs.length) await supabaseAdmin.from("security_recommendations").insert(recs);
+    return { ok: true, recommendations_created: recs.length, aps_analyzed: aps?.length ?? 0 };
+  });

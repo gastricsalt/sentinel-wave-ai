@@ -32,12 +32,15 @@ function Page() {
   const scansFn = useServerFn(listScans);
   const baselineFn = useServerFn(listBaseline);
   const addBaseline = useServerFn(upsertBaseline);
+  const wifiFn = useServerFn(getWifiVulnerabilities);
+  const runWifiFn = useServerFn(runWifiAssessment);
 
   const sumQ = useQuery({ queryKey: ["assessment-summary"], queryFn: () => summaryFn(), refetchInterval: 15_000 });
   const cveQ = useQuery({ queryKey: ["cves"], queryFn: () => cvesFn({ data: {} }) });
   const recQ = useQuery({ queryKey: ["recs"], queryFn: () => recsFn() });
   const scanQ = useQuery({ queryKey: ["scans"], queryFn: () => scansFn() });
   const baseQ = useQuery({ queryKey: ["baseline"], queryFn: () => baselineFn() });
+  const wifiQ = useQuery({ queryKey: ["wifi-vulns"], queryFn: () => wifiFn(), refetchInterval: 30_000 });
 
   const runMut = useMutation({
     mutationFn: (id: string) => runFn({ data: { scanId: id } }),

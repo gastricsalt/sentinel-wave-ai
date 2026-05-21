@@ -187,6 +187,54 @@ export type Database = {
         }
         Relationships: []
       }
+      host_cves: {
+        Row: {
+          created_at: string
+          cve_id: string
+          cvss: number
+          exploit_available: boolean
+          host_id: string
+          id: string
+          port_id: string | null
+          product: string | null
+          reference_url: string | null
+          scan_id: string
+          severity: string
+          summary: string
+          version: string | null
+        }
+        Insert: {
+          created_at?: string
+          cve_id: string
+          cvss?: number
+          exploit_available?: boolean
+          host_id: string
+          id?: string
+          port_id?: string | null
+          product?: string | null
+          reference_url?: string | null
+          scan_id: string
+          severity?: string
+          summary: string
+          version?: string | null
+        }
+        Update: {
+          created_at?: string
+          cve_id?: string
+          cvss?: number
+          exploit_available?: boolean
+          host_id?: string
+          id?: string
+          port_id?: string | null
+          product?: string | null
+          reference_url?: string | null
+          scan_id?: string
+          severity?: string
+          summary?: string
+          version?: string | null
+        }
+        Relationships: []
+      }
       incidents: {
         Row: {
           actor_id: string | null
@@ -276,6 +324,42 @@ export type Database = {
           payload?: Json
           sensor_id?: string
           threat_count?: number
+        }
+        Relationships: []
+      }
+      network_baseline: {
+        Row: {
+          approved: boolean
+          device_type: string | null
+          first_seen: string
+          id: string
+          ip: string | null
+          label: string | null
+          last_seen: string
+          mac: string | null
+          notes: string | null
+        }
+        Insert: {
+          approved?: boolean
+          device_type?: string | null
+          first_seen?: string
+          id?: string
+          ip?: string | null
+          label?: string | null
+          last_seen?: string
+          mac?: string | null
+          notes?: string | null
+        }
+        Update: {
+          approved?: boolean
+          device_type?: string | null
+          first_seen?: string
+          id?: string
+          ip?: string | null
+          label?: string | null
+          last_seen?: string
+          mac?: string | null
+          notes?: string | null
         }
         Relationships: []
       }
@@ -550,6 +634,84 @@ export type Database = {
           },
         ]
       }
+      security_recommendations: {
+        Row: {
+          category: string
+          created_at: string
+          host_id: string | null
+          id: string
+          priority: Database["public"]["Enums"]["rec_priority"]
+          rationale: string
+          scan_id: string | null
+          status: Database["public"]["Enums"]["rec_status"]
+          threat_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          host_id?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["rec_priority"]
+          rationale: string
+          scan_id?: string | null
+          status?: Database["public"]["Enums"]["rec_status"]
+          threat_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          host_id?: string | null
+          id?: string
+          priority?: Database["public"]["Enums"]["rec_priority"]
+          rationale?: string
+          scan_id?: string | null
+          status?: Database["public"]["Enums"]["rec_status"]
+          threat_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      security_scores: {
+        Row: {
+          computed_at: string
+          details: Json
+          encryption: number
+          id: string
+          iot: number
+          network: number
+          overall: number
+          scan_id: string | null
+          wireless: number
+        }
+        Insert: {
+          computed_at?: string
+          details?: Json
+          encryption?: number
+          id?: string
+          iot?: number
+          network?: number
+          overall?: number
+          scan_id?: string | null
+          wireless?: number
+        }
+        Update: {
+          computed_at?: string
+          details?: Json
+          encryption?: number
+          id?: string
+          iot?: number
+          network?: number
+          overall?: number
+          scan_id?: string | null
+          wireless?: number
+        }
+        Relationships: []
+      }
       sensors: {
         Row: {
           created_at: string
@@ -743,6 +905,8 @@ export type Database = {
         | "c2"
         | "actions"
       port_risk: "info" | "low" | "medium" | "high" | "critical"
+      rec_priority: "low" | "medium" | "high" | "critical"
+      rec_status: "open" | "in_progress" | "resolved" | "dismissed"
       scan_job_status:
         | "queued"
         | "running"
@@ -901,6 +1065,8 @@ export const Constants = {
         "actions",
       ],
       port_risk: ["info", "low", "medium", "high", "critical"],
+      rec_priority: ["low", "medium", "high", "critical"],
+      rec_status: ["open", "in_progress", "resolved", "dismissed"],
       scan_job_status: [
         "queued",
         "running",

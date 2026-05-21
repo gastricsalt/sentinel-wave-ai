@@ -72,14 +72,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "AI-WIDS" },
+      { name: "description", content: "SentinelWave AI is a Linux-based platform for real-time wireless intrusion and rogue access point detection." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "AI-WIDS" },
+      { property: "og:description", content: "SentinelWave AI is a Linux-based platform for real-time wireless intrusion and rogue access point detection." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "AI-WIDS" },
+      { name: "twitter:description", content: "SentinelWave AI is a Linux-based platform for real-time wireless intrusion and rogue access point detection." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4eeb12a2-2cda-4e87-87ec-a12a34a77ee0/id-preview-6df25a02--9d629229-64e3-4fb4-ac23-f0216251c77f.lovable.app-1779395943852.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/4eeb12a2-2cda-4e87-87ec-a12a34a77ee0/id-preview-6df25a02--9d629229-64e3-4fb4-ac23-f0216251c77f.lovable.app-1779395943852.png" },
     ],
     links: [
       {

@@ -10,10 +10,12 @@ import {
   runAssessment,
   listBaseline,
   upsertBaseline,
+  getWifiVulnerabilities,
+  runWifiAssessment,
 } from "@/lib/assessment.functions";
 import { listScans } from "@/lib/recon.functions";
 import { PageHeader, Card, StatCard, SeverityPill } from "@/components/ui-kit";
-import { ShieldCheck, AlertTriangle, PlayCircle, ExternalLink, CheckCircle2, Plus } from "lucide-react";
+import { ShieldCheck, AlertTriangle, PlayCircle, ExternalLink, CheckCircle2, Plus, Wifi, Radio } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/assessment")({
   head: () => ({ meta: [{ title: "Vulnerability Assessment — SentinelWave AI" }] }),

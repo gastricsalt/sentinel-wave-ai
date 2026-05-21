@@ -26,6 +26,7 @@ import { Route as AuthenticatedLabRouteImport } from './routes/_authenticated/la
 import { Route as AuthenticatedIncidentsRouteImport } from './routes/_authenticated/incidents'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedClientsRouteImport } from './routes/_authenticated/clients'
+import { Route as AuthenticatedAssessmentRouteImport } from './routes/_authenticated/assessment'
 import { Route as AuthenticatedAnalystRouteImport } from './routes/_authenticated/analyst'
 import { Route as AuthenticatedActorsRouteImport } from './routes/_authenticated/actors'
 import { Route as ApiPublicScanJobsRouteImport } from './routes/api/public/scan-jobs'
@@ -120,6 +121,11 @@ const AuthenticatedClientsRoute = AuthenticatedClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAssessmentRoute = AuthenticatedAssessmentRouteImport.update({
+  id: '/assessment',
+  path: '/assessment',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAnalystRoute = AuthenticatedAnalystRouteImport.update({
   id: '/analyst',
   path: '/analyst',
@@ -164,6 +170,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/actors': typeof AuthenticatedActorsRouteWithChildren
   '/analyst': typeof AuthenticatedAnalystRoute
+  '/assessment': typeof AuthenticatedAssessmentRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/incidents': typeof AuthenticatedIncidentsRouteWithChildren
@@ -189,6 +196,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/actors': typeof AuthenticatedActorsRouteWithChildren
   '/analyst': typeof AuthenticatedAnalystRoute
+  '/assessment': typeof AuthenticatedAssessmentRoute
   '/clients': typeof AuthenticatedClientsRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/incidents': typeof AuthenticatedIncidentsRouteWithChildren
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/actors': typeof AuthenticatedActorsRouteWithChildren
   '/_authenticated/analyst': typeof AuthenticatedAnalystRoute
+  '/_authenticated/assessment': typeof AuthenticatedAssessmentRoute
   '/_authenticated/clients': typeof AuthenticatedClientsRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/incidents': typeof AuthenticatedIncidentsRouteWithChildren
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/actors'
     | '/analyst'
+    | '/assessment'
     | '/clients'
     | '/dashboard'
     | '/incidents'
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/actors'
     | '/analyst'
+    | '/assessment'
     | '/clients'
     | '/dashboard'
     | '/incidents'
@@ -294,6 +305,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/actors'
     | '/_authenticated/analyst'
+    | '/_authenticated/assessment'
     | '/_authenticated/clients'
     | '/_authenticated/dashboard'
     | '/_authenticated/incidents'
@@ -445,6 +457,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/assessment': {
+      id: '/_authenticated/assessment'
+      path: '/assessment'
+      fullPath: '/assessment'
+      preLoaderRoute: typeof AuthenticatedAssessmentRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/analyst': {
       id: '/_authenticated/analyst'
       path: '/analyst'
@@ -525,6 +544,7 @@ const AuthenticatedIncidentsRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedActorsRoute: typeof AuthenticatedActorsRouteWithChildren
   AuthenticatedAnalystRoute: typeof AuthenticatedAnalystRoute
+  AuthenticatedAssessmentRoute: typeof AuthenticatedAssessmentRoute
   AuthenticatedClientsRoute: typeof AuthenticatedClientsRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedIncidentsRoute: typeof AuthenticatedIncidentsRouteWithChildren
@@ -542,6 +562,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedActorsRoute: AuthenticatedActorsRouteWithChildren,
   AuthenticatedAnalystRoute: AuthenticatedAnalystRoute,
+  AuthenticatedAssessmentRoute: AuthenticatedAssessmentRoute,
   AuthenticatedClientsRoute: AuthenticatedClientsRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedIncidentsRoute: AuthenticatedIncidentsRouteWithChildren,

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { matchCves } from "./cve-knowledge";
+import { analyzeAccessPoint, scoreWifiPosture, type WifiFinding } from "./wifi-vulns";
 
 async function requireAdmin(userId: string) {
   const { data } = await supabaseAdmin.from("user_roles").select("role").eq("user_id", userId);

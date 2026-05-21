@@ -131,6 +131,66 @@ function Page() {
         </div>
       </Card>
 
+      <Card
+        title={`Wi-Fi vulnerabilities (${wifiQ.data?.findings.length ?? 0})`}
+        className="mb-6"
+        actions={
+          <button
+            onClick={() => wifiMut.mutate()}
+            disabled={wifiMut.isPending}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 disabled:opacity-50"
+          >
+            <Radio className="w-3.5 h-3.5" /> {wifiMut.isPending ? "Analyzing…" : "Run Wi-Fi assessment"}
+          </button>
+        }
+      >
+        {wifiQ.data && (
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+            <StatCard label="Wireless score" value={`${wifiQ.data.wireless_score}/100`} accent={wifiQ.data.wireless_score >= 80 ? "ok" : wifiQ.data.wireless_score >= 60 ? "warn" : "danger"} />
+            <StatCard label="APs analyzed" value={wifiQ.data.ap_count} />
+            <StatCard label="Critical" value={wifiQ.data.buckets.critical} accent={wifiQ.data.buckets.critical > 0 ? "danger" : "ok"} />
+            <StatCard label="High" value={wifiQ.data.buckets.high} accent={wifiQ.data.buckets.high > 0 ? "warn" : "ok"} />
+            <StatCard label="Medium" value={wifiQ.data.buckets.medium} />
+          </div>
+        )}
+        <div className="space-y-3 max-h-[28rem] overflow-y-auto">
+          {(wifiQ.data?.access_points ?? []).filter((x: any) => x.findings.length > 0).length === 0 && (
+            <p className="text-sm text-muted-foreground">No Wi-Fi vulnerabilities detected. Ensure the capture agent is reporting APs.</p>
+          )}
+          {(wifiQ.data?.access_points ?? []).filter((x: any) => x.findings.length > 0).map((x: any) => (
+            <div key={x.ap.id} className="p-3 rounded-md border border-border bg-surface/40">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <div className="flex items-center gap-2">
+                  <Wifi className="w-4 h-4 text-primary" />
+                  <div>
+                    <div className="text-sm font-medium">{x.ap.ssid ?? <span className="text-muted-foreground italic">(hidden)</span>}</div>
+                    <div className="text-[11px] font-mono text-muted-foreground">{x.ap.bssid} · ch{x.ap.channel ?? "?"} · {x.ap.encryption ?? "open"} · {x.ap.vendor ?? "unknown vendor"}</div>
+                  </div>
+                </div>
+                <div className="text-xs text-muted-foreground">Score <span className="font-mono">{x.score}</span></div>
+              </div>
+              <div className="space-y-1.5">
+                {x.findings.map((f: any) => (
+                  <div key={f.id} className="flex items-start gap-2 text-xs">
+                    <SeverityPill severity={f.severity === "critical" ? "critical" : f.severity === "high" ? "high" : f.severity === "medium" ? "warning" : "info"} />
+                    <div className="flex-1">
+                      <div className="font-medium">{f.title} <span className="font-mono text-muted-foreground">[{f.code} · CVSS {f.cvss}]</span></div>
+                      <div className="text-muted-foreground">{f.summary}</div>
+                      <div className="text-primary/90 mt-0.5">→ {f.recommendation}</div>
+                      {f.reference && (
+                        <a href={f.reference} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-primary hover:underline mt-0.5">
+                          reference <ExternalLink className="w-3 h-3" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <Card title={`CVE findings (${cves.length})`}>
           <div className="space-y-2 max-h-96 overflow-y-auto">

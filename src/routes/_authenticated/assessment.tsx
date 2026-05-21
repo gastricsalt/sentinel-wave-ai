@@ -59,6 +59,13 @@ function Page() {
     mutationFn: (v: { mac: string; label?: string }) => addBaseline({ data: { ...v, approved: true } }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["baseline"] }),
   });
+  const wifiMut = useMutation({
+    mutationFn: () => runWifiFn(),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["wifi-vulns"] });
+      qc.invalidateQueries({ queryKey: ["recs"] });
+    },
+  });
 
   const s = sumQ.data;
   const cves = cveQ.data?.cves ?? [];

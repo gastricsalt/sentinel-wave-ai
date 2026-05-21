@@ -134,7 +134,8 @@ function Page() {
       <Card
         title={`Wi-Fi vulnerabilities (${wifiQ.data?.findings.length ?? 0})`}
         className="mb-6"
-        actions={
+        actions={undefined as any}
+        action={
           <button
             onClick={() => wifiMut.mutate()}
             disabled={wifiMut.isPending}

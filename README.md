@@ -324,6 +324,16 @@ Worker runtime. Replace with a Web-standard or fetch-based equivalent.
 Keep this section current. Add a new entry every time the agent ships a
 feature, route, table, or breaking change.
 
+- **2026-05-20** — **Vulnerability Assessment engine**: new `/assessment` route.
+  CVE correlation maps discovered service banners/versions to a curated
+  rule set (OpenSSH regreSSHion, EternalBlue, BlueKeep, Apache path-traversal,
+  Hikvision/Dahua RCEs, exposed DBs, Telnet/FTP/rlogin, etc.). AI risk scoring,
+  per-category posture score (wireless / network / IoT / encryption),
+  remediation recommendations with status workflow, network baseline of
+  approved MACs (unauthorized device alerts), and wireless↔network threat
+  correlation (rogue AP + vulnerable host = critical chain). New tables:
+  `host_cves`, `security_recommendations`, `security_scores`,
+  `network_baseline`.
 - **2026-05-19** — **Network recon module**: new `/recon` route with scan queue,
   host/port inventory, and severity-classified findings (telnet, SMB, RDP,
   exposed DBs, etc.). Added `sentinelwave-nmap.py` Linux agent that polls a

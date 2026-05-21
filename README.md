@@ -324,6 +324,16 @@ Worker runtime. Replace with a Web-standard or fetch-based equivalent.
 Keep this section current. Add a new entry every time the agent ships a
 feature, route, table, or breaking change.
 
+- **2026-05-21** — **Wi-Fi vulnerability scanner**: the `/assessment` page now
+  analyzes every observed access point for wireless-specific weaknesses —
+  open / WEP / WPA1 / TKIP, KRACK & FragAttacks exposure on WPA2, WPS PIN
+  (Pixie Dust / Reaver), hidden SSIDs, default vendor SSIDs, common honeypot
+  names (Free Wi-Fi, Starbucks, …), rogue APs, locally-administered BSSIDs
+  typical of `hostapd`/`mana` evil-twins, and non-1/6/11 channel usage. Each
+  finding ships with CVSS, related CVE, reference link, and a concrete
+  remediation. "Run Wi-Fi assessment" writes high/critical findings into
+  `security_recommendations` (category `wireless`) and feeds the wireless
+  posture score.
 - **2026-05-20** — **Vulnerability Assessment engine**: new `/assessment` route.
   CVE correlation maps discovered service banners/versions to a curated
   rule set (OpenSSH regreSSHion, EternalBlue, BlueKeep, Apache path-traversal,

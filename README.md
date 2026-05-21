@@ -244,6 +244,7 @@ journalctl -u sentinelwave-agent -f
 | `/networks` | Access point inventory |
 | `/clients` | Client device inventory |
 | `/recon` | **Network recon — nmap scan queue, host/port/service exposure, severity-classified findings** |
+| `/assessment` | **Vulnerability Assessment — CVE correlation, AI risk scoring, remediation recs, security posture score, network baseline** |
 | `/analyst` | AI security analyst chat (Gemini 2.5 Flash) |
 | `/reports` | Exports + link to printable security report |
 | `/security-report` | Printable executive report (use browser → Save as PDF) |
